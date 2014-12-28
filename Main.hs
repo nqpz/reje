@@ -3,7 +3,8 @@ module Main (main) where
 import System.Environment (getArgs)
 import System.Exit
 
-import Reje.Game
+import Reje.Game (play)
+import Reje.Tracks
 
 
 main :: IO ()

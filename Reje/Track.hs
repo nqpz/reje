@@ -1,5 +1,7 @@
 module Reje.Track where
 
+import Reje.Color
+
 import Data.Maybe
 
 
@@ -15,11 +17,26 @@ data VDir = VGoForward
 
 type Dir = (HDir, VDir)
 
-type Track = [Dir]
-type TrackAnnot = (Track, Integer)
+hdir :: Dir -> HDir
+hdir = fst
+
+vdir :: Dir -> VDir
+vdir = snd
+
+type TrackBase = [Dir]
+
+data Track = Track { dirs :: TrackBase
+                   , colors :: [Color]
+                   , useWalls :: Bool
+                   }
+           deriving (Eq, Show)
+
+
+track :: TrackBase -> Track
+track dirs = Track dirs (cycle [dimgray, lavender]) True
 
 parseTrack :: String -> Track
-parseTrack = parse' hconv vconv
+parseTrack = track . parse' hconv vconv
   where hconv 'F' = Just HGoForward
         hconv 'L' = Just GoLeft
         hconv 'R' = Just GoRight
@@ -32,7 +49,7 @@ parseTrack = parse' hconv vconv
 
         parse' :: (Char -> Maybe HDir)
                   -> (Char -> Maybe VDir)
-                  -> String -> Track
+                  -> String -> TrackBase
         parse' hf vf s = case splitAt 2 s of
           ([h, v], s') -> (++ parse' hf vf s') $ fromMaybe [] $ do
             hd <- hf h
@@ -59,29 +76,29 @@ ow n = take n $ repeat GoDown
 vo :: Int -> [VDir]
 vo n = take n $ repeat VGoForward
 
-riup :: Int -> Track
+riup :: Int -> TrackBase
 riup n = zip (ri n) (up n)
 
-riow :: Int -> Track
+riow :: Int -> TrackBase
 riow n = zip (ri n) (ow n)
 
-rivo :: Int -> Track
+rivo :: Int -> TrackBase
 rivo n = zip (ri n) (vo n)
 
-leup :: Int -> Track
+leup :: Int -> TrackBase
 leup n = zip (le n) (up n)
 
-leow :: Int -> Track
+leow :: Int -> TrackBase
 leow n = zip (le n) (ow n)
 
-levo :: Int -> Track
+levo :: Int -> TrackBase
 levo n = zip (le n) (vo n)
 
-houp :: Int -> Track
+houp :: Int -> TrackBase
 houp n = zip (ho n) (up n)
 
-hoow :: Int -> Track
+hoow :: Int -> TrackBase
 hoow n = zip (ho n) (ow n)
 
-hovo :: Int -> Track
+hovo :: Int -> TrackBase
 hovo n = zip (ho n) (vo n)
