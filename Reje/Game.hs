@@ -3,10 +3,12 @@ module Reje.Game where
 import Reje.Perspective
 import Reje.Track
 import Reje.Color
+import Reje.Random
 
 import Data.List
 import Data.Ratio
 import Data.Bits
+import Data.Functor
 import Control.Concurrent (threadDelay)
 import qualified Graphics.UI.SDL as SDL
 import qualified Graphics.UI.SDL.Primitives as SDLp
@@ -18,7 +20,7 @@ data Object = Polygon Polygon Color
              deriving (Show, Eq)
 
 w, h :: Integer
-(w, h) = (1920, 1080)
+(w, h) = (1080, 1080)
 
 yEnd = h % 2
 
@@ -149,3 +151,13 @@ le n = take n $ repeat TurnLeft
 
 fo :: Int -> [Dir]
 fo n = take n $ repeat GoForward
+
+randomTrack :: IO Track
+randomTrack = do
+  seed <- evalRandIO (randomR minBound maxBound)
+  return $ track $ evalRand (concat <$> (sequence $ repeat randomDirs)) $ mkStdGen seed
+
+randomDirs :: RandomState [Dir]
+randomDirs = do
+  n <- randomR 5 50
+  choice [ ri n, le n, fo n ]
