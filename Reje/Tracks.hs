@@ -1,3 +1,4 @@
+{-# LANGUAGE TupleSections #-}
 module Reje.Tracks where
 
 import Reje.Track
@@ -25,25 +26,23 @@ trackZig :: Track
 trackZig = track $ zip (cycle (ri 40 ++ le 40)) (cycle (up 30 ++ ow 30))
 
 trackRand :: IO Track
-trackRand = do
-  seed <- evalRandIO (randomR minBound maxBound)
-  let (dirs, colors) = flip evalRand (mkStdGen seed) $ do
-        dirs_colors <- sequence $ repeat $ do
-          dirs <- randomDirs
-          color <- randomColor
-          return (dirs, color)
-        let dirs = concat $ fst $ unzip dirs_colors
-            colors = snd $ unzip dirs_colors
-        return (dirs, colors)
+trackRand = evalRandIO $ do
+  useWalls <- choice [True, False]
+  dirss_colors <- sequence $ repeat $ (,) <$> randomDirs <*> randomColor
+  let dirs = concat $ fst $ unzip dirss_colors
+      colors = snd $ unzip dirss_colors
   return $ Track { dirs = dirs
                  , colors = colors
-                 , useWalls = True
+                 , useWalls = useWalls
                  }
 
 randomDirs :: RandomState [Dir]
 randomDirs = do
   n <- randomR 5 50
-  choice $ map ($ n) [ riup, riow, rivo, leup, leow, levo, houp, hoow, hovo ]
+  ($ n) <$> weightedChoice [ (riup, 2), (riow, 1), (rivo, 2)
+                           , (leup, 2), (leow, 1), (levo, 2)
+                           , (houp, 2), (hoow, 1), (hovo, 2)
+                           ]
 
 randomColor :: RandomState Color
 randomColor = RGBA <$> d <*> d <*> d <*> pure 1
