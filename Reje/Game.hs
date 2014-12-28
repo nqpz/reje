@@ -21,31 +21,30 @@ data Object = Polygon Polygon Color
              deriving (Show, Eq)
 
 
-w, h :: Integer
-(w, h) = (1920, 1080)
+-- todo: make these part of function paramaters
+(w, h) = (800, 600)
+factor = 30 -- a higher factor means more, smaller bars
+factorTurn = 20 -- a higher turn factor means smoother turns
+trackLen = 90 -- how many bars to draw
 
 w' = fromIntegral w
 h' = fromIntegral h
-factor :: Integer
-factor = 30
-factorTurn :: Integer
-factorTurn = 10
 
-trackLen = 90
 
+-- Create objects from a track
 trackObjects :: Track -> [Object]
 trackObjects (Track dirs colors useWalls) =
-  concat $ zipWith (\ps c -> map (\p -> Polygon p c) ps) polygonss lightedColors
+  concat $ take trackLen
+  $ zipWith (\ps c -> map (\p -> Polygon p c) ps) polygonss lightedColors
   where polygonss = map (uncurry (makePoly useWalls))
-                    $ take trackLen
                     $ zip (zip ys (tail ys)) (zip xs (tail xs))
-        ys = map (\(_, _, y) -> y) raw
-        xs = map (\(x0, x1, _) -> (x0, x1)) raw
-        raw = scanl (nextXs factor) (0, w' - 1, 0) $ zip xEnds yEnds
+        ys = map (\(_, _, y) -> y) coors
+        xs = map (\(x0, x1, _) -> (x0, x1)) coors
+        coors = scanl (nextXs factor) (0, w' - 1, 0) $ zip xEnds yEnds
         xEnds = map (w' *) $ map (endPoint factorTurn) $ hturns $ map hdir dirs
         yEnds = map (h' *) $ map (endPoint factorTurn) $ vturns $ map vdir dirs
-        lightedColors = zipWith colorLight colors lightings
-        lightings = map (fromRational . (1 -)) (0 : perspPoints factor)
+        lightedColors = zipWith colorLight colors lights
+        lights = map (fromRational . (1 -)) (0 : perspPoints factor) -- sloppy
 
 nextXs :: Integer
           -> (Rational, Rational, Rational) -> (Rational, Rational)
@@ -94,7 +93,7 @@ play track = do
 play' :: SDL.Surface -> Track -> IO ()
 play' screenSurf track = do
   renderTrackToScreen screenSurf track
-  threadDelay 2000
+  threadDelay 1 -- todo: fix at some fps
   play' screenSurf $ nextTrackPiece track
 
 nextTrackPiece :: Track -> Track
@@ -115,7 +114,7 @@ colorToPixelRight format color = case color of
   RGBA r g b a -> SDL.mapRGBA format (w r) (w g) (w b) (w a)
   where w = colorDoubleToWord
 
--- Works in some other cases.
+-- Works in some other cases.  SDL gets confused at some point.
 colorToPixel :: Color -> SDL.Pixel
 colorToPixel color = case color of
   RGBA r g b a -> SDL.Pixel (

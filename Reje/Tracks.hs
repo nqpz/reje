@@ -25,9 +25,12 @@ trackVZig = track $ cycle (hoow 20 ++ hovo 20 ++ houp 20)
 trackZig :: Track
 trackZig = track $ zip (cycle (ri 40 ++ le 40)) (cycle (up 30 ++ ow 30))
 
+trackBumps :: Track
+trackBumps = track $ zip (cycle (ho 1)) (cycle (up 10 ++ ow 10 ++ vo 25))
+
 trackRand :: IO Track
 trackRand = evalRandIO $ do
-  useWalls <- choice [True, False]
+  useWalls <- weightedChoice [(False, 10), (True, 1)] -- walls aren't that nice
   dirss_colors <- sequence $ repeat $ (,) <$> randomDirs <*> randomColor
   let dirs = concat $ fst $ unzip dirss_colors
       colors = snd $ unzip dirss_colors

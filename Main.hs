@@ -17,5 +17,6 @@ main = do
       "up" -> return trackUp
       "vzig" -> return trackVZig
       "zig" -> return trackZig
+      "bumps" -> return trackBumps
       _ -> putStrLn "no such track" >> exitFailure
     _ -> trackRand

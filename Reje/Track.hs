@@ -33,7 +33,10 @@ data Track = Track { dirs :: TrackBase
 
 
 track :: TrackBase -> Track
-track dirs = Track dirs (cycle [dimgray, lavender]) True
+track dirs = Track { dirs = dirs
+                   , colors = (cycle [dimgray, lavender])
+                   , useWalls = False
+                   }
 
 parseTrack :: String -> Track
 parseTrack = track . parse' hconv vconv
