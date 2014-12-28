@@ -25,3 +25,6 @@ perspPairs k = zip (0 : points) points
 perspPairsUntil :: Integer -> Rational -> [(Rational, Rational)]
 perspPairsUntil k threshold =
   takeWhile (\(a, b) -> b - a > threshold) $ perspPairs k
+
+perspPointsUntil :: Integer -> Rational -> [Rational]
+perspPointsUntil k threshold = map snd $ perspPairsUntil k threshold
