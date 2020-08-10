@@ -1,0 +1,31 @@
+name:                reje
+version:             0.1.0.0
+github:              "nqpz/reje"
+license:             ISC
+author:              "Niels G. W. Serup"
+maintainer:          "ngws@metanohi.name"
+copyright:           "2020 Niels G. W. Serup"
+
+extra-source-files:
+- README.md
+
+description:         Please see the README on GitHub at <https://github.com/nqpz/reje#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- MonadRandom
+- random-fu
+- random-extras
+- SDL
+- SDL-gfx
+- colour
+
+library:
+  source-dirs: src
+
+executables:
+  reje:
+    main:                Main.hs
+    source-dirs:         app
+    dependencies:
+    - reje

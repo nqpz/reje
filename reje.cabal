@@ -1,0 +1,63 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           reje
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/nqpz/reje#readme>
+homepage:       https://github.com/nqpz/reje#readme
+bug-reports:    https://github.com/nqpz/reje/issues
+author:         Niels G. W. Serup
+maintainer:     ngws@metanohi.name
+copyright:      2020 Niels G. W. Serup
+license:        ISC
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/nqpz/reje
+
+library
+  exposed-modules:
+      Reje.Color
+      Reje.Game
+      Reje.Misc
+      Reje.Perspective
+      Reje.Random
+      Reje.Track
+      Reje.Tracks
+  other-modules:
+      Paths_reje
+  hs-source-dirs:
+      src
+  build-depends:
+      MonadRandom
+    , SDL
+    , SDL-gfx
+    , base >=4.7 && <5
+    , colour
+    , random-extras
+    , random-fu
+  default-language: Haskell2010
+
+executable reje
+  main-is: Main.hs
+  other-modules:
+      Paths_reje
+  hs-source-dirs:
+      app
+  build-depends:
+      MonadRandom
+    , SDL
+    , SDL-gfx
+    , base >=4.7 && <5
+    , colour
+    , random-extras
+    , random-fu
+    , reje
+  default-language: Haskell2010
