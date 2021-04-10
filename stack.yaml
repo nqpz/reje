@@ -6,4 +6,4 @@ extra-deps:
 - random-extras-0.19@sha256:52579ee8653b17d8b19fb54833ecbab8df47b6cf61a77c9614df0c3155441d29,1137
 
 nix:
-  packages: [pkgconfig, SDL, SDL_gfx]
+  shell-file: default.nix
